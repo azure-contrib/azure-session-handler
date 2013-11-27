@@ -1,0 +1,25 @@
+{
+    "name": "interslice/azure-session-handler",
+    "description": "Use Windows Azure Table Storage as a session handler for PHP applications",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Thai Phan",
+            "email": "thai@outlook.com"
+        }
+    ],
+    "require": {
+        "microsoft/windowsazure": "*"
+    },
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.php.net"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Interslice": "src/"
+        }
+    }
+}
