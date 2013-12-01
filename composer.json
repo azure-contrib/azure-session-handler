@@ -1,7 +1,8 @@
 {
     "name": "interslice/azure-session-handler",
     "description": "Use Windows Azure Table Storage as a session handler for PHP applications",
-    "minimum-stability": "dev",
+    "keywords": ["windows", "azure", "nosql", "session"],
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Thai Phan",
@@ -9,7 +10,8 @@
         }
     ],
     "require": {
-        "microsoft/windowsazure": "*"
+        "php": ">=5.3.3",
+        "microsoft/windowsazure": "dev-master"
     },
     "repositories": [
         {
