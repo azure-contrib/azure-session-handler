@@ -29,6 +29,8 @@ class WindowsAzure
     private $partitionKey;
 
     /**
+     * Constructor.
+     *
      * @param TableRestProxy $client
      * @param string $table
      * @param string $partitionKey
