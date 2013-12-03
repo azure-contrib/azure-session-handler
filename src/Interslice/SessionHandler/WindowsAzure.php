@@ -16,6 +16,7 @@
  */
 namespace Interslice\SessionHandler;
 
+use Exception;
 use WindowsAzure\Common\ServiceException;
 use WindowsAzure\Table\Models\EdmType;
 use WindowsAzure\Table\Models\Entity;
@@ -58,6 +59,8 @@ class WindowsAzure
                 default:
                     return false;
             }
+        } catch (Exception $e) {
+            return false;
         }
         return true;
     }
@@ -89,7 +92,7 @@ class WindowsAzure
             $entity = $result->getEntity();
             $data = $entity->getPropertyValue('data');
             return base64_decode($data);
-        } catch (ServiceException $e) {
+        } catch (Exception $e) {
             return '';
         }
     }
@@ -109,7 +112,7 @@ class WindowsAzure
         $entity->addProperty('data', EdmType::STRING, base64_encode($data));
         try {
             $this->client->insertOrReplaceEntity($this->table, $entity);
-        } catch (ServiceException $e) {
+        } catch (Exception $e) {
             return;
         }
     }
@@ -156,7 +159,7 @@ class WindowsAzure
                 );
             }
             return true;
-        } catch (ServiceException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
