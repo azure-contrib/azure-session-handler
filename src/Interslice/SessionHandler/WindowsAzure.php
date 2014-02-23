@@ -23,7 +23,7 @@ use WindowsAzure\Table\Models\Entity;
 use WindowsAzure\Table\Models\Filters\Filter;
 use WindowsAzure\Table\TableRestProxy;
 
-class WindowsAzure
+class WindowsAzure implements \SessionHandlerInterface
 {
     private $client;
     private $table;
