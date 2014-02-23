@@ -48,7 +48,7 @@ class WindowsAzure implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function open($save_path, $session_name)
+    public function open($savePath, $sessionName)
     {
         try {
             $this->client->createTable($this->table);
@@ -78,16 +78,16 @@ class WindowsAzure implements \SessionHandlerInterface
     /**
      * Retrieve a session by ID.
      *
-     * @param string $session_id
+     * @param string $sessionId
      * @return string
      */
-    public function read($session_id)
+    public function read($sessionId)
     {
         try {
             $result = $this->client->getEntity(
                 $this->table,
                 $this->partitionKey,
-                $session_id
+                $sessionId
             );
             $entity = $result->getEntity();
             $data = $entity->getPropertyValue('data');
@@ -100,16 +100,16 @@ class WindowsAzure implements \SessionHandlerInterface
     /**
      * Create or update a session by ID.
      *
-     * @param string $session_id
-     * @param string $session_data
+     * @param string $sessionId
+     * @param string $sessionData
      */
-    public function write($session_id, $session_data)
+    public function write($sessionId, $sessionData)
     {
         $entity = new Entity();
         $entity->setPartitionKey($this->partitionKey);
-        $entity->setRowKey($session_id);
+        $entity->setRowKey($sessionId);
         $entity->addProperty('last_accessed', EdmType::INT32, time());
-        $entity->addProperty('data', EdmType::STRING, base64_encode($session_data));
+        $entity->addProperty('data', EdmType::STRING, base64_encode($sessionData));
         try {
             $this->client->insertOrReplaceEntity($this->table, $entity);
         } catch (Exception $e) {
@@ -120,16 +120,16 @@ class WindowsAzure implements \SessionHandlerInterface
     /**
      * Destroy a session by ID.
      *
-     * @param string $session_id
+     * @param string $sessionId
      * @return bool
      */
-    public function destroy($session_id)
+    public function destroy($sessionId)
     {
         try {
             $this->client->deleteEntity(
                 $this->table,
                 $this->partitionKey,
-                $session_id
+                $sessionId
             );
             return true;
         } catch (ServiceException $e) {
