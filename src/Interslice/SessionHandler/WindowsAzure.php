@@ -23,7 +23,7 @@ use WindowsAzure\Table\Models\Entity;
 use WindowsAzure\Table\Models\Filters\Filter;
 use WindowsAzure\Table\TableRestProxy;
 
-class WindowsAzure
+class WindowsAzure implements \SessionHandlerInterface
 {
     private $client;
     private $table;
@@ -48,7 +48,7 @@ class WindowsAzure
      *
      * @return bool
      */
-    public function open()
+    public function open($savePath, $sessionName)
     {
         try {
             $this->client->createTable($this->table);
@@ -78,16 +78,16 @@ class WindowsAzure
     /**
      * Retrieve a session by ID.
      *
-     * @param string $id
+     * @param string $sessionId
      * @return string
      */
-    public function read($id)
+    public function read($sessionId)
     {
         try {
             $result = $this->client->getEntity(
                 $this->table,
                 $this->partitionKey,
-                $id
+                $sessionId
             );
             $entity = $result->getEntity();
             $data = $entity->getPropertyValue('data');
@@ -100,16 +100,16 @@ class WindowsAzure
     /**
      * Create or update a session by ID.
      *
-     * @param string $id
-     * @param string $data
+     * @param string $sessionId
+     * @param string $sessionData
      */
-    public function write($id, $data)
+    public function write($sessionId, $sessionData)
     {
         $entity = new Entity();
         $entity->setPartitionKey($this->partitionKey);
-        $entity->setRowKey($id);
+        $entity->setRowKey($sessionId);
         $entity->addProperty('last_accessed', EdmType::INT32, time());
-        $entity->addProperty('data', EdmType::STRING, base64_encode($data));
+        $entity->addProperty('data', EdmType::STRING, base64_encode($sessionData));
         try {
             $this->client->insertOrReplaceEntity($this->table, $entity);
         } catch (Exception $e) {
@@ -120,16 +120,16 @@ class WindowsAzure
     /**
      * Destroy a session by ID.
      *
-     * @param string $id
+     * @param string $sessionId
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($sessionId)
     {
         try {
             $this->client->deleteEntity(
                 $this->table,
                 $this->partitionKey,
-                $id
+                $sessionId
             );
             return true;
         } catch (ServiceException $e) {
@@ -140,12 +140,12 @@ class WindowsAzure
     /**
      * Delete sessions that have expired.
      *
-     * @param int $lifetime
+     * @param int $maxlifetime
      * @return bool
      */
-    public function gc($lifetime)
+    public function gc($maxlifetime)
     {
-        $deadline = time() - $lifetime;
+        $deadline = time() - $maxlifetime;
         $queryString = "PartitionKey eq '$this->partitionKey' and last_accessed lt $deadline";
         $filter = Filter::applyQueryString($queryString);
         try {

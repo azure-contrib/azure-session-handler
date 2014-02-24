@@ -36,22 +36,22 @@ class WindowsAzureTest extends \PHPUnit_Framework_TestCase
         $client = $this->getMockClient();
         $client->shouldReceive('createTable');
         $sessionHandler = new SessionHandler($client);
-        $this->assertTrue($sessionHandler->open());
+        $this->assertTrue($sessionHandler->open(null, null));
 
         $client = $this->getMockClient();
         $client->shouldReceive('createTable')->andThrow(new Exception());
         $sessionHandler = new SessionHandler($client);
-        $this->assertFalse($sessionHandler->open());
+        $this->assertFalse($sessionHandler->open(null, null));
 
         $client = $this->getMockClient();
         $client->shouldReceive('createTable')->andThrow(new ServiceException('403'));
         $sessionHandler = new SessionHandler($client);
-        $this->assertFalse($sessionHandler->open());
+        $this->assertFalse($sessionHandler->open(null, null));
 
         $client = $this->getMockClient();
         $client->shouldReceive('createTable')->andThrow(new ServiceException('409'));
         $sessionHandler = new SessionHandler($client);
-        $this->assertTrue($sessionHandler->open());
+        $this->assertTrue($sessionHandler->open(null, null));
     }
 
     public function testClose()
